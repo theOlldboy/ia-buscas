@@ -87,6 +87,25 @@ public class Main {
 		}
 
 
+		BuscaInformada buscaBme = new BestFirst();
+
+		buscaBme.setInicio(puzzleInicial);
+		buscaBme.setObjetivo(puzzleFinal);
+		buscaBme.buscar();
+
+		for(Estado e : buscaBme.getCaminhoSolucao()){
+			System.out.println(e);
+		}
+
+		/*		BuscaInformada buscaAS = new AStar();
+		buscaAS.setInicio(puzzleInicial);
+		buscaAs.setObjetivo(puzzleFinal);
+		buscaAs.buscar();
+		for(Estado e : busca.getCaminhoSolucao()) {
+			System.out.println(e);
+		}
+*/
+
 
 
 
