@@ -293,6 +293,36 @@ public class Main {
                 }
         break;
         }
+        case 7:
+        BuscaInformada buscaAS = new AStar();
+
+        char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
+        char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
+        puzzleInicial.setEstado(cfgIni);
+        puzzleFinal.setEstado(cfgFim);
+
+        buscaAS.setInicio(puzzleInicial);
+        buscaAS.setObjetivo(puzzleFinal);
+        buscaAS.buscar();
+        for(Estado e : buscaAS.getCaminhoSolucao()) {
+            System.out.println(e);
+        }
+        System.out.println("Estado Inicial e Final diferentes:");
+        BuscaInformada buscaAS1 = new AStar();
+
+        char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
+        char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
+        puzzleInicial.setEstado(cfgIni);
+        puzzleFinal.setEstado(cfgFim);
+
+        buscaAS1.setInicio(puzzleInicial);
+        buscaAS1.setObjetivo(puzzleFinal);
+        buscaAS1.buscar();
+        for(Estado e : buscaAS1.getCaminhoSolucao()) {
+            System.out.println(e);
+        }
+        break;
+    }
 
 
 
