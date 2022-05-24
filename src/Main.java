@@ -1,7 +1,4 @@
 import espacoDeEstados.*;
-import estrategiasDeBusca.cega.BuscaCega;
-import estrategiasDeBusca.cega.BuscaEmLargura;
-import estrategiasDeBusca.cega.BuscaEmProfundidade;
 import estrategiasDeBusca.cega.BuscaEmProfundidadeLimitada;
 import estrategiasDeBusca.heuristica.*;
 
@@ -10,323 +7,156 @@ import java.util.Scanner;
 
 public class Main {
 
-	@SuppressWarnings("rawtypes")
-	public static void main(String[] args) {
-		
-//		char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-//		char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-//		char[] cfgIni = {'2','3',' ','7','4','1','5','8','6'};
-        char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-		char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-		//char[] cfgIni = {'7','2','3','4',' ','1','5','8','6'}; // OutOfMemory
+    @SuppressWarnings("rawtypes")
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        char[] cfgIni = {'1',' ','6','4','5','8','7','3','2'};
+        char[] cfgIni2 = {'8','4','6','5','7','2','1',' ','3'};
+
+        char[] cgFim = {'1','6','4','5',' ','8','7','3','2'};
+        char[] cgFim2 = {' ', '1', '2', '3', '4', '5', '6', '7', '8'};
+
+        Puzzle8 puzzleInicial = new Puzzle8();
+        puzzleInicial.setEstado(cfgIni);
+        puzzleInicial.setCusto(0);
+        puzzleInicial.setAvaliacao( puzzleInicial.heuristica(Puzzle8.TABULEIRO_ORGANIZADO) );
+
+        Puzzle8 puzzleFinal = new Puzzle8();
+        puzzleFinal.setEstado(cgFim);
+        puzzleFinal.setCusto(0);
+        puzzleFinal.setAvaliacao(0);
 
 
 
-		Puzzle8 puzzleInicial = new Puzzle8();
-		puzzleInicial.setCusto(0);
-		puzzleInicial.setAvaliacao( puzzleInicial.heuristica(Puzzle8.TABULEIRO_ORGANIZADO) );
-			
-		Puzzle8 puzzleFinal = new Puzzle8();
-		puzzleFinal.setCusto(0);
-		puzzleFinal.setAvaliacao(0);
+        System.out.println("Selecione o metodo de busca desejado:");
 
-        Scanner s = new Scanner(System.in); //Usando a classe Scanner para pegar o valor escrito no console
+        System.out.println("1 - Busca em profundidade limitada manual");
+        System.out.println("2 - Busca profundidade limitada interativa");
+        System.out.println("3 - Busca AStar");
+        System.out.println("4 - Busca BestFirst");
 
-        System.out.println("Digite a busca desejada: ");
+        Integer selecionaBusca = scanner.nextInt();
+        scanner.nextLine();
 
-        System.out.println("|1-Busca Informada|");
-        System.out.println("|2-Busca em Largura|");
-        System.out.println("|3-Busca em Profundidade|");
-        System.out.println("|4-Busca em Profundidade Limitada|");
-        System.out.println("|5-Busca BestFirst|");
-
-        System.out.printf("Digite aqui: ");
-        int contador = s.nextInt();
-
-        switch (contador) {
+        switch(selecionaBusca) {
             case 1:
-		BuscaInformada busca = new AStar();
+                System.out.println("Estabeleca um limite para a primeira execucao:");
+                BuscaEmProfundidadeLimitada buscaL = new BuscaEmProfundidadeLimitada();
 
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
+                buscaL.setInicio(puzzleInicial);
+                buscaL.setObjetivo(puzzleFinal);
+                buscaL.setLimite(scanner.nextInt());
+                buscaL.buscar();
+                scanner.nextLine();
 
-		busca.setInicio(puzzleInicial);
-		busca.setObjetivo(puzzleFinal);
-		busca.buscar();
-		for(Estado e : busca.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-                BuscaInformada busca = new AStar();
+                mostrarCaminho(buscaL.getCaminhoSolucao());
+                System.out.println("Fim da primeira execucao.");
 
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
+                System.out.println("Estabeleca um limite para a segunda execucao:");
 
-                busca.setInicio(puzzleInicial);
-                busca.setObjetivo(puzzleFinal);
-                busca.buscar();
-                for(Estado e : busca.getCaminhoSolucao()) {
-                    System.out.println(e);
-                }
-        break;
+                puzzleInicial.setEstado(cfgIni2);
+                puzzleFinal.setEstado(cgFim2);
+
+                buscaL.setLimite(scanner.nextInt());
+                buscaL.buscar();
+                scanner.nextLine();
+
+                mostrarCaminho(buscaL.getCaminhoSolucao());
+                System.out.println("Fim da segunda execucao.");
+
+                break;
             case 2:
-		BuscaCega buscaC = new BuscaCega() {
-                    @Override
-                    public void buscar() {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                BuscaEmProfundidadeLimitada buscaInterativa = new BuscaEmProfundidadeLimitada();
+
+                buscaInterativa.setInicio(puzzleInicial);
+                buscaInterativa.setObjetivo(puzzleFinal);
+
+                buscaInterativa.setLimite(0);
+
+                List<Estado<?>> caminhoSolucao = null;
+
+                while(caminhoSolucao == null) {
+                    try {
+                        buscaInterativa.buscar();
+                        caminhoSolucao = buscaInterativa.getCaminhoSolucao();
+                    } catch (Exception e) {
+                        System.out.println("Buscando limite... " + buscaInterativa.getLimite());
                     }
-                };
-
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-		buscaC.setInicio(puzzleInicial);
-		buscaC.setObjetivo(puzzleFinal);
-		buscaC.buscar();
-		for(Estado e : buscaC.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-                BuscaCega buscaC1 = new BuscaCega() {
-                    @Override
-                    public void buscar() {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-                buscaC1.setInicio(puzzleInicial);
-                buscaC1.setObjetivo(puzzleFinal);
-                buscaC1.buscar();
-                for(Estado e : buscaC1.getCaminhoSolucao()) {
-                    System.out.println(e);
+                    buscaInterativa.setLimite(buscaInterativa.getLimite() + 1);
                 }
-        break;
+
+                mostrarCaminho(buscaInterativa.getCaminhoSolucao());
+                System.out.println("Fim da primeira execucao");
+
+                puzzleInicial.setEstado(cfgIni2);
+                puzzleFinal.setEstado(cgFim2);
+                buscaInterativa.setLimite(0);
+                caminhoSolucao = null;
+
+                while(caminhoSolucao == null) {
+                    try {
+                        buscaInterativa.buscar();
+                        caminhoSolucao = buscaInterativa.getCaminhoSolucao();
+                    } catch (Exception e) {
+                        System.out.println("Buscando limite... " + buscaInterativa.getLimite());
+                    }
+                    buscaInterativa.setLimite(buscaInterativa.getLimite() + 1);
+                }
+
+                mostrarCaminho(buscaInterativa.getCaminhoSolucao());
+                System.out.println("Fim da segunda execucao");
+
+                break;
+
             case 3:
-                BuscaEmLargura buscaL = new BuscaEmLargura(puzzleInicial, puzzleFinal);
+                AStar buscaAstar = new AStar();
+                buscaAstar.setInicio(puzzleInicial);
+                buscaAstar.setObjetivo(puzzleFinal);
 
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
+                buscaAstar.buscar();
 
-		buscaL.setInicio(puzzleInicial);
-		buscaL.setObjetivo(puzzleFinal);
-		buscaL.buscar();
-		for(Estado e : buscaL.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-                BuscaEmLargura buscaL1 = new BuscaEmLargura(puzzleInicial, puzzleFinal);
+                mostrarCaminho(buscaAstar.getCaminhoSolucao());
+                System.out.println("Fim da primeira execucao.");
 
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
+                puzzleInicial.setEstado(cfgIni2);
+                puzzleFinal.setEstado(cgFim2);
 
-                buscaL1.setInicio(puzzleInicial);
-                buscaL1.setObjetivo(puzzleFinal);
-                buscaL1.buscar();
-                for(Estado e : buscaL.getCaminhoSolucao()) {
-                    System.out.println(e);
-                }
-        break;
+                buscaAstar.buscar();
+
+                mostrarCaminho(buscaAstar.getCaminhoSolucao());
+                System.out.println("Fim da segunda execucao.");
+
+                break;
+
             case 4:
+                BestFirst bF = new BestFirst();
+                bF.setInicio(puzzleInicial);
+                bF.setObjetivo(puzzleFinal);
 
-                BuscaEmProfundidade buscaP = new BuscaEmProfundidade(puzzleInicial, puzzleFinal);
+                bF.buscar();
 
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-		buscaP.setInicio(puzzleInicial);
-		buscaP.setObjetivo(puzzleFinal);
-		buscaP.buscar();
-		for(Estado e : buscaP.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-                BuscaEmProfundidade buscaP1 = new BuscaEmProfundidade(puzzleInicial, puzzleFinal);
-
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-                buscaP1.setInicio(puzzleInicial);
-                buscaP1.setObjetivo(puzzleFinal);
-                buscaP1.buscar();
-                for(Estado e : buscaP1.getCaminhoSolucao()) {
-                    System.out.println(e);
-                }
-        break;
-            case 5:
+                mostrarCaminho(bF.getCaminhoSolucao());
+                System.out.println("Fim da primeira execucao.");
 
 
-            BuscaEmProfundidadeLimitada buscaPL = new BuscaEmProfundidadeLimitada(puzzleInicial, puzzleFinal, 0);
+                puzzleInicial.setEstado(cfgIni2);
+                puzzleFinal.setEstado(cgFim2);
 
-		int upper_limit = 20;
+                bF.buscar();
 
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
+                mostrarCaminho(bF.getCaminhoSolucao());
+                System.out.println("Fim da segunda execucao.");
 
-		buscaPL.setInicio(puzzleInicial);
-		buscaPL.setObjetivo(puzzleFinal);
-		buscaPL.setLimite(0);
-		List<Estado<?>> check = null;
-
-		while(check == null){
-				try{
-					buscaPL.buscar();
-					check = buscaPL.getCaminhoSolucao();
-				}catch (Exception e){
-
-				}
-				buscaPL.setLimite(buscaPL.getLimite() + 1);
-
-		}
-		for(Estado e : buscaPL.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-
-                BuscaEmProfundidadeLimitada buscaPL1 = new BuscaEmProfundidadeLimitada(puzzleInicial, puzzleFinal, 0);
-
-                int upper_limit = 20;
-
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-                buscaPL1.setInicio(puzzleInicial);
-                buscaPL1.setObjetivo(puzzleFinal);
-                buscaPL1.setLimite(0);
-                List<Estado<?>> check = null;
-
-                while(check == null){
-                    try{
-                        buscaPL1.buscar();
-                        check = buscaPL1.getCaminhoSolucao();
-                    }catch (Exception e){
-
-                    }
-                    buscaPL1.setLimite(buscaPL.getLimite() + 1);
-
-                }
-                for(Estado e : buscaPL1.getCaminhoSolucao()) {
-                    System.out.println(e);
-                }
-        break;
-            case 6:
-		BuscaInformada buscaBme = new BestFirst();
-
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-		buscaBme.setInicio(puzzleInicial);
-		buscaBme.setObjetivo(puzzleFinal);
-		buscaBme.buscar();
-
-		for(Estado e : buscaBme.getCaminhoSolucao()){
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-
-                BuscaInformada buscaBme1 = new BestFirst();
-
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-                buscaBme1.setInicio(puzzleInicial);
-                buscaBme1.setObjetivo(puzzleFinal);
-                buscaBme1.buscar();
-
-                for(Estado e : buscaBme1.getCaminhoSolucao()){
-                    System.out.println(e);
-                }
-        break;
-            case 7:
-				BuscaInformada buscaAS = new AStar();
-
-                char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-		buscaAS.setInicio(puzzleInicial);
-		buscaAS.setObjetivo(puzzleFinal);
-		buscaAS.buscar();
-		for(Estado e : buscaAS.getCaminhoSolucao()) {
-			System.out.println(e);
-		}
-                System.out.println("Estado Inicial e Final diferentes:");
-                BuscaInformada buscaAS1 = new AStar();
-
-                char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-                char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-                puzzleInicial.setEstado(cfgIni);
-                puzzleFinal.setEstado(cfgFim);
-
-                buscaAS1.setInicio(puzzleInicial);
-                buscaAS1.setObjetivo(puzzleFinal);
-                buscaAS1.buscar();
-                for(Estado e : buscaAS1.getCaminhoSolucao()) {
-                    System.out.println(e);
-                }
-        break;
         }
-        case 7:
-        BuscaInformada buscaAS = new AStar();
-
-        char[] cfgIni = {'2','4','3','7','1','6','5',' ','8'};
-        char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-        puzzleInicial.setEstado(cfgIni);
-        puzzleFinal.setEstado(cfgFim);
-
-        buscaAS.setInicio(puzzleInicial);
-        buscaAS.setObjetivo(puzzleFinal);
-        buscaAS.buscar();
-        for(Estado e : buscaAS.getCaminhoSolucao()) {
-            System.out.println(e);
-        }
-        System.out.println("Estado Inicial e Final diferentes:");
-        BuscaInformada buscaAS1 = new AStar();
-
-        char[] cfgIni = {' ','2','3','1','4','6','7','5','8'};
-        char[] cfgFim = {'1','2','3','4','5','6','7','8',' '};
-        puzzleInicial.setEstado(cfgIni);
-        puzzleFinal.setEstado(cfgFim);
-
-        buscaAS1.setInicio(puzzleInicial);
-        buscaAS1.setObjetivo(puzzleFinal);
-        buscaAS1.buscar();
-        for(Estado e : buscaAS1.getCaminhoSolucao()) {
-            System.out.println(e);
-        }
-        break;
+        System.exit(0);
     }
 
-
-
-		System.exit(0);
-	}
-
+    public static void mostrarCaminho(List<Estado<?>> caminhoDaSolucao) {
+        for(Estado e : caminhoDaSolucao) {
+            System.out.println(e);
+            System.out.println(" ");
+        }
+    }
 }
